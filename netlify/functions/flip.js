@@ -17,17 +17,17 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// --- KONFIGURASI ---
-const SOLANA_RPC = "https://api.devnet.solana.com"; // Ganti ke mainnet-beta saat live
+// --- CONFIGURATION ---
+const SOLANA_RPC = "https://api.devnet.solana.com"; // Change to mainnet-beta when live
 const connection = new Connection(SOLANA_RPC, 'confirmed');
 
-// Alamat wallet bandar di-hardcode
+// House wallet address is hardcoded
 const houseWalletAddress = new PublicKey("hivWuGJHMnHNKAA5mqHxU5k1731XwQNbs8TKd22yLsT");
 // --------------------
 
 const router = express.Router();
 
-// --- FUNGSI BARU UNTUK MEMUAT WALLET DENGAN AMAN ---
+// --- NEW FUNCTION TO SECURELY LOAD WALLET ---
 function getRelayerWallet() {
   const relayerSecretKeyString = process.env.RELAYER_PRIVATE_KEY;
   if (!relayerSecretKeyString) {
@@ -85,26 +85,49 @@ router.post('/create-flip', async (req, res) => {
     }
 });
 
-// Endpoint 2: Submit Transaction & Coinflip
+// Endpoint 2: Submit Transaction & Coinflip (WITH DEBUG LOGS)
 router.post('/submit-flip', async (req, res) => {
     try {
+        // --- NEW DEBUG LOG ---
+        console.log("[DEBUG v2] Starting /submit-flip");
+        // ---------------------
+
         const relayerWallet = getRelayerWallet();
+
+        // --- NEW DEBUG LOG ---
+        if (relayerWallet && relayerWallet.publicKey) {
+            console.log("[DEBUG v2] Relayer wallet loaded:", relayerWallet.publicKey.toBase58());
+        } else {
+            console.error("[DEBUG v2] FAILED to load relayer wallet!");
+            return res.status(500).json({ error: 'Relayer wallet failed to load' });
+        }
+        // ---------------------
 
         const { signedTransaction } = req.body;
         if (!signedTransaction) {
+            console.error("[DEBUG v2] Error: Missing signedTransaction");
             return res.status(400).json({ error: 'Missing signedTransaction' });
         }
         console.log(`[SUBMIT] Received signed transaction from user`);
 
         const transaction = Transaction.from(Buffer.from(signedTransaction, 'base64'));
         
-        // --- INI DIA PERBAIKANNYA ---
-        // Kita harus set feePayer-nya lagi di sini
+        // --- THIS IS THE FIX ---
+        // We must re-set the feePayer here because it's lost during serialization
         transaction.feePayer = relayerWallet.publicKey;
-        // -----------------------------
+        // -----------------------
         
-        // Baris 108 Anda yang error, sekarang aman
+        // --- NEW DEBUG LOG ---
+        console.log("[DEBUG v2] Fee payer SET to:", transaction.feePayer.toBase58());
+        console.log("[DEBUG v2] Attempting to sign with relayer...");
+        // ---------------------
+
+        // This is the line that was failing
         transaction.sign([relayerWallet]); 
+
+        // --- NEW DEBUG LOG ---
+        console.log("[DEBUG v2] Sign with relayer SUCCEEDED.");
+        // ---------------------
 
         console.log(`[SUBMIT] Sending transaction (bet) to network...`);
         const signature = await sendAndConfirmRawTransaction(
@@ -144,7 +167,10 @@ router.post('/submit-flip', async (req, res) => {
         }
 
     } catch (error) {
-        console.error('[SUBMIT] Error:', error);
+        // --- NEW DEBUG LOG ---
+        console.error('[DEBUG v2] CATCH ERROR:', error.message);
+        console.error(error); // Print the full error object
+        // ---------------------
         res.status(500).json({ error: error.message });
     }
 });
