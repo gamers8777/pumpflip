@@ -1,12 +1,8 @@
-// src/CoinflipWindow.jsx
 import React, { useState, useEffect } from 'react';
 import { useWallet, useConnection } from '@solana/wallet-adapter-react'; 
 import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
 import { Transaction } from '@solana/web3.js'; 
 import { FaXTwitter } from "react-icons/fa6"; 
-
-// HAPUS: Impor context
-// import { useFlipContext } from './App'; 
 
 // --- NUMBER FORMATTING FUNCTION ---
 function formatMarketCap(mcap) {
@@ -28,9 +24,6 @@ function CoinflipWindow() {
   const { publicKey, connected, signTransaction } = useWallet(); 
   const { connection } = useConnection(); 
   
-  // HAPUS: Ambil fungsi 'addLiveTransaction' dari context
-  // const { addLiveTransaction } = useFlipContext();
-
   const [activeView, setActiveView] = useState('coinflip');
   const [marketCap, setMarketCap] = useState(null);
   const [choice, setChoice] = useState('heads'); 
@@ -94,13 +87,13 @@ function CoinflipWindow() {
     try {
       // 1. Request transaction from backend
       console.log('Requesting transaction from backend...');
-      const createResponse = await fetch('/api/create-flip', { // Calls /api/
+      const createResponse = await fetch('/api/create-flip', { 
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           userWallet: publicKey.toBase58(),
           amount: betAmount,
-          choice: choice // <-- TAMBAHKAN INI
+          choice: choice 
         }),
       });
 
@@ -119,7 +112,7 @@ function CoinflipWindow() {
 
       // 4. Send to backend for execution
       console.log('Sending signed transaction to backend...');
-      const submitResponse = await fetch('/api/submit-flip', { // Calls /api/
+      const submitResponse = await fetch('/api/submit-flip', { 
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -135,13 +128,33 @@ function CoinflipWindow() {
       setResultMessage(submitData.message);
       setBetTx(submitData.betTx || null);
       setPayoutTx(submitData.payoutTx || null);
-
-      // --- HAPUS PANGGILAN addLiveTransaction ---
-      // Data sekarang datang dari Firestore, bukan dari sini
       
     } catch (error) {
       console.error('Flip Failed:', error);
-      setResultMessage(`ERROR: ${error.message}`);
+      
+      // ==========================================================
+      // --- PERBAIKAN PESAN ERROR JELEK DIMULAI DI SINI ---
+      // ==========================================================
+      let friendlyMessage = `ERROR: ${error.message}`; // Default
+      
+      // Cek jika error karena saldo tidak cukup
+      if (error.message && error.message.toLowerCase().includes("insufficient lamports")) {
+        friendlyMessage = "ERROR: INSUFFICIENT SOL BALANCE.";
+      } 
+      // Cek jika error karena user menekan 'Reject'
+      else if (error.message && error.message.toLowerCase().includes("user rejected")) {
+        friendlyMessage = "ERROR: TRANSACTION REJECTED.";
+      }
+      // Cek jika error simulasi umum
+      else if (error.message && error.message.toLowerCase().includes("simulation failed")) {
+         friendlyMessage = "ERROR: SIMULATION FAILED. (Check Balance?)";
+      }
+
+      setResultMessage(friendlyMessage);
+      // ==========================================================
+      // --- PERBAIKAN PESAN ERROR SELESAI ---
+      // ==========================================================
+      
       setBetTx(null);
       setPayoutTx(null);
     } finally {
@@ -171,8 +184,8 @@ function CoinflipWindow() {
 
         <div className="window-content">
           
-          <h1 className={`coinflip-logo ${showGlitch ? 'glitch' : ''}`} data-text="PUMPFLIP">
-            PUMPFLIP
+          <h1 className={`coinflip-logo ${showGlitch ? 'glitch' : ''}`} data-text="SOLFLIP">
+            SOLFLIP
           </h1>
           <p className="subtitle">Choose your fate. Engage protocol.</p>
 
@@ -278,9 +291,9 @@ function CoinflipWindow() {
             
           ) : (
             <div className="description-content">
-              <h3>ABOUT PUMPFLIP</h3>
+              <h3>ABOUT SOLFLIP</h3>
               <p>
-                PUMPFLIP is a (centralized) provably fair coinflip
+                SOLFLIP is a (centralized) provably fair coinflip
                 game. We pay the gas for you!
               </p>
               <p>
@@ -298,7 +311,7 @@ function CoinflipWindow() {
           </div>
           
           <div className="contract-address-display">
-            <p>CONTRACT ADDRESS</p> 
+            <p>CONTRACT ADDRESS</p> S
             <div className="ca-box">
               <a 
                 href={`https://solscan.io/address/${TOKEN_CONTRACT_ADDRESS}?cluster=devnet`} 
