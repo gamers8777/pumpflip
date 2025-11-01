@@ -1,0 +1,16 @@
+[build]
+  # Perintah untuk build React
+  command = "npm run build"
+  
+  # Folder hasil build React (Vite biasanya 'dist')
+  publish = "dist" 
+  
+  # Folder tempat backend Anda
+  functions = "netlify/functions"
+
+# Ini "sihir"-nya:
+# Semua request ke /api/... akan dialihkan ke backend 'flip.js' Anda
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/flip/:splat"
+  status = 200

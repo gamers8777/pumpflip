@@ -1,0 +1,105 @@
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap');
+
+/* Gaya dasar dan font */
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #000;
+  color: #00FF00; 
+  font-family: 'VT323', monospace; 
+  -webkit-font-smoothing: none; 
+  -moz-osx-font-smoothing: grayscale;
+  font-size: 16px;
+  
+  /* --- PERBAIKAN SCROLL --- */
+  overflow-y: auto; /* Izinkan scroll vertikal */
+  overflow-x: hidden; /* Sembunyikan scroll horizontal */
+  
+  display: flex; 
+  justify-content: center;
+  align-items: flex-start; /* Mulai konten dari atas */
+  min-height: 100vh;
+}
+
+/* Scrollbar retro */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #1a1a1a;
+}
+::-webkit-scrollbar-thumb {
+  background: #00FF00;
+  border: 1px solid #000;
+}
+
+/* Efek Glitch CSS */
+.glitch {
+  position: relative;
+  display: inline-block;
+}
+
+.glitch::before,
+.glitch::after {
+  content: attr(data-text); 
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #000; 
+  overflow: hidden; 
+  color: #FF00FF; 
+}
+
+.glitch::before {
+  left: 2px; 
+  text-shadow: -2px 0 #FF00FF; 
+  animation: glitch-anim-1 2s infinite linear alternate-reverse;
+}
+
+.glitch::after {
+  left: -2px; 
+  text-shadow: -2px 0 #00FFFF; 
+  animation: glitch-anim-2 2s infinite linear alternate-reverse;
+}
+
+@keyframes glitch-anim-1 {
+  0% { clip: rect(40px, 9999px, 80px, 0); transform: skew(0.5deg); }
+  10% { clip: rect(60px, 9999px, 10px, 0); transform: skew(0.2deg); }
+  20% { clip: rect(10px, 9999px, 70px, 0); transform: skew(0.8deg); }
+  30% { clip: rect(80px, 9999px, 50px, 0); transform: skew(0.1deg); }
+  40% { clip: rect(30px, 9999px, 90px, 0); transform: skew(0.6deg); }
+  50% { clip: rect(90px, 9999px, 20px, 0); transform: skew(0.3deg); }
+  60% { clip: rect(20px, 9999px, 40px, 0); transform: skew(0.9deg); }
+  70% { clip: rect(50px, 9999px, 100px, 0); transform: skew(0.4deg); }
+  80% { clip: rect(70px, 9999px, 30px, 0); transform: skew(0.7deg); }
+  90% { clip: rect(100px, 9999px, 60px, 0); transform: skew(0.0deg); }
+  100% { clip: rect(40px, 9999px, 80px, 0); transform: skew(0.5deg); }
+}
+
+@keyframes glitch-anim-2 {
+  0% { clip: rect(100px, 9999px, 60px, 0); transform: skew(-0.5deg); }
+  10% { clip: rect(20px, 9999px, 40px, 0); transform: skew(-0.2deg); }
+  20% { clip: rect(70px, 9999px, 30px, 0); transform: skew(-0.8deg); }
+  30% { clip: rect(50px, 9999px, 100px, 0); transform: skew(-0.1deg); }
+  40% { clip: rect(90px, 9999px, 20px, 0); transform: skew(-0.6deg); }
+  50% { clip: rect(30px, 9999px, 90px, 0); transform: skew(-0.3deg); }
+  60% { clip: rect(80px, 9999px, 50px, 0); transform: skew(-0.9deg); }
+  70% { clip: rect(10px, 9999px, 70px, 0); transform: skew(-0.4deg); }
+  80% { clip: rect(60px, 9999px, 10px, 0); transform: skew(-0.7deg); }
+  90% { clip: rect(40px, 9999px, 80px, 0); transform: skew(-0.0deg); }
+  100% { clip: rect(100px, 9999px, 60px, 0); transform: skew(-0.5deg); }
+}
+
+/* Posisi Canvas Matrix */
+#matrix-canvas {
+  position: fixed; 
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1; 
+  background-color: #000;
+}
