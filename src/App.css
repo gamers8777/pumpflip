@@ -15,7 +15,7 @@
 .coinflip-window {
   /* Ubah ini */
   /* background-color: #0d0d0d; */ 
-  background-color: rgba(13, 13, 13, 0.5); /* <-- GANTI DENGAN INI (0.9 adalah 90% solid, 10% transparan) */
+  background-color: rgba(13, 13, 13, 0.7); /* <-- GANTI DENGAN INI (0.9 adalah 90% solid, 10% transparan) */
   /* Anda bisa menyesuaikan angka terakhir (0.9) antara 0 (transparan penuh) dan 1 (solid penuh) */
   
   border: 2px solid #00FF00;
@@ -350,33 +350,24 @@
 }
 
 .contract-address-display p {
-  font-family: 'VT323', monospace;
-  font-size: 14px;
-  color: #AAA; 
-  margin-bottom: 8px; 
-  text-transform: uppercase;
+/* ... (kode CSS lainnya) ... */
 }
 
 .ca-box {
-  background-color: #000;
+  /* background-color: #000; */ /* <-- Ganti ini */
+  background-color: rgba(0, 0, 0, 0.5); /* <-- Menjadi ini (50% transparan) */
   border: 2px solid #00FF00;
-  border-radius: 10px; 
-  padding: 10px 15px;
-  font-family: 'VT323', monospace;
-  font-size: 16px;
-  color: #00FF00;
-  word-wrap: break-word; 
-  cursor: pointer;
+/* ... (kode CSS lainnya) ... */
   transition: background-color 0.2s;
 }
 
 .ca-box a {
-  color: #00FF00;
-  text-decoration: none;
+/* ... (kode CSS lainnya) ... */
 }
 
 .ca-box:hover {
-  background-color: #002200; 
+  /* background-color: #002200; */ /* <-- Ganti ini */
+  background-color: rgba(0, 34, 0, 0.7); /* <-- Menjadi ini (hijau transparan saat hover) */
 }
 
 
