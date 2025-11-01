@@ -5,7 +5,7 @@ body {
   margin: 0;
   padding: 0;
   background-color: #000;
-  color: #00FF00; 
+  color: #00ff9d; 
   font-family: 'VT323', monospace; 
   -webkit-font-smoothing: none; 
   -moz-osx-font-smoothing: grayscale;
@@ -30,7 +30,7 @@ body {
   background: #1a1a1a;
 }
 ::-webkit-scrollbar-thumb {
-  background: #00FF00;
+  background: #00ff9d;
   border: 1px solid #000;
 }
 
