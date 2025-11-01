@@ -15,7 +15,7 @@
 .coinflip-window {
   /* Ubah ini */
   /* background-color: #0d0d0d; */ 
-  background-color: rgba(13, 13, 13, 0.9); /* <-- GANTI DENGAN INI (0.9 adalah 90% solid, 10% transparan) */
+  background-color: rgba(13, 13, 13, 0.5); /* <-- GANTI DENGAN INI (0.9 adalah 90% solid, 10% transparan) */
   /* Anda bisa menyesuaikan angka terakhir (0.9) antara 0 (transparan penuh) dan 1 (solid penuh) */
   
   border: 2px solid #00FF00;

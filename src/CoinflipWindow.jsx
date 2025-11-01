@@ -7,7 +7,13 @@ import { FaXTwitter } from "react-icons/fa6";
 // --- NUMBER FORMATTING FUNCTION ---
 function formatMarketCap(mcap) {
   if (mcap === null || mcap === undefined) return '$...';
-  if (mcap === 'Error') return '$Error';
+  
+  // ==========================================================
+  // --- PERBAIKAN $ERROR DI SINI ---
+  // ==========================================================
+  if (mcap === 'Error') return 'Error'; // <-- Hapus tanda '$' dari sini
+  // ==========================================================
+  
   const num = parseFloat(mcap);
   if (num >= 1_000_000_000) return `$${(num / 1_000_000_000).toFixed(2)}B`;
   if (num >= 1_000_000) return `$${(num / 1_000_000).toFixed(2)}M`;
@@ -311,7 +317,7 @@ function CoinflipWindow() {
           </div>
           
           <div className="contract-address-display">
-            <p>CONTRACT ADDRESS</p> S
+            <p>CONTRACT ADDRESS</p> 
             <div className="ca-box">
               <a 
                 href={`https://solscan.io/address/${TOKEN_CONTRACT_ADDRESS}?cluster=devnet`} 
@@ -329,3 +335,4 @@ function CoinflipWindow() {
 }
 
 export default CoinflipWindow;
+
