@@ -75,7 +75,7 @@ function LiveFeedWindow() {
       <div className="feed-content" ref={feedContentRef}>
         {/* Initial logs */}
         <div className="feed-line">
-          <span className="action">&gt; Connecting to SOLFLIP protocol...</span>
+          <span className="action">&gt; Connecting to PUMPFLIP protocol...</span>
         </div>
         <div className="feed-line">
           <span className="action">&gt; STATUS: </span>
