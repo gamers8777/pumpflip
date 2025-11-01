@@ -85,27 +85,27 @@ router.post('/create-flip', async (req, res) => {
     }
 });
 
-// Endpoint 2: Submit Transaction & Coinflip (WITH DEBUG LOGS)
+// Endpoint 2: Submit Transaction & Coinflip (WITH DEBUG v3 and partialSign FIX)
 router.post('/submit-flip', async (req, res) => {
     try {
         // --- NEW DEBUG LOG ---
-        console.log("[DEBUG v2] Starting /submit-flip");
+        console.log("[DEBUG v3] Starting /submit-flip");
         // ---------------------
 
         const relayerWallet = getRelayerWallet();
 
         // --- NEW DEBUG LOG ---
         if (relayerWallet && relayerWallet.publicKey) {
-            console.log("[DEBUG v2] Relayer wallet loaded:", relayerWallet.publicKey.toBase58());
+            console.log("[DEBUG v3] Relayer wallet loaded:", relayerWallet.publicKey.toBase58());
         } else {
-            console.error("[DEBUG v2] FAILED to load relayer wallet!");
+            console.error("[DEBUG v3] FAILED to load relayer wallet!");
             return res.status(500).json({ error: 'Relayer wallet failed to load' });
         }
         // ---------------------
 
         const { signedTransaction } = req.body;
         if (!signedTransaction) {
-            console.error("[DEBUG v2] Error: Missing signedTransaction");
+            console.error("[DEBUG v3] Error: Missing signedTransaction");
             return res.status(400).json({ error: 'Missing signedTransaction' });
         }
         console.log(`[SUBMIT] Received signed transaction from user`);
@@ -118,15 +118,21 @@ router.post('/submit-flip', async (req, res) => {
         // -----------------------
         
         // --- NEW DEBUG LOG ---
-        console.log("[DEBUG v2] Fee payer SET to:", transaction.feePayer.toBase58());
-        console.log("[DEBUG v2] Attempting to sign with relayer...");
+        console.log("[DEBUG v3] Fee payer SET to:", transaction.feePayer.toBase58());
+        console.log("[DEBUG v3] Attempting to PARTIAL SIGN with relayer...");
         // ---------------------
 
-        // This is the line that was failing
-        transaction.sign([relayerWallet]); 
+        // =================================================================
+        // --- THE FIX ---
+        // Use partialSign() for partially-signed transactions
+        // instead of sign()
+        //
+        // transaction.sign([relayerWallet]); // <-- OLD FAILING LINE
+        transaction.partialSign(relayerWallet); // <-- NEW FIX
+        // =================================================================
 
         // --- NEW DEBUG LOG ---
-        console.log("[DEBUG v2] Sign with relayer SUCCEEDED.");
+        console.log("[DEBUG v3] Partial sign with relayer SUCCEEDED.");
         // ---------------------
 
         console.log(`[SUBMIT] Sending transaction (bet) to network...`);
@@ -168,7 +174,7 @@ router.post('/submit-flip', async (req, res) => {
 
     } catch (error) {
         // --- NEW DEBUG LOG ---
-        console.error('[DEBUG v2] CATCH ERROR:', error.message);
+        console.error('[DEBUG v3] CATCH ERROR:', error.message);
         console.error(error); // Print the full error object
         // ---------------------
         res.status(500).json({ error: error.message });
