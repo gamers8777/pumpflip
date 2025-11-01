@@ -26,7 +26,7 @@ const relayerSecretKey = Uint8Array.from(JSON.parse(process.env.RELAYER_PRIVATE_
 const relayerWallet = Keypair.fromSecretKey(relayerSecretKey);
 
 // Hardcode your house wallet address
-const houseWalletAddress = new PublicKey("TCxYUG556eXbNRMxXMtvJyTTuHs5wxE557HgcfzYg4w");
+const houseWalletAddress = new PublicKey("hivWuGJHMnHNKAA5mqHxU5k1731XwQNbs8TKd22yLsT");
 // --------------------
 
 const router = express.Router();
