@@ -1,3 +1,4 @@
+// flip.js
 const express = require('express');
 const { 
     Connection, 
@@ -6,12 +7,35 @@ const {
     PublicKey, 
     Keypair, 
     LAMPORTS_PER_SOL,
-    sendAndConfirmRawTransaction
+    sendAndConfirmRawTransaction,
+    TransactionInstruction // <--- PASTIKAN INI DITAMBAHKAN
 } = require('@solana/web3.js');
 const cors = require('cors');
-const bs58 = require('bs58');
 const serverless = require('serverless-http'); 
 require('dotenv').config();
+
+// --- BARU: Impor Firebase Admin ---
+const admin = require('firebase-admin');
+
+// --- BARU: Inisialisasi Firebase Admin ---
+// Ambil kredensial dari variabel lingkungan Netlify
+try {
+  // Pastikan variabel lingkungan ini sudah Anda atur di Netlify
+  const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
+
+  if (admin.apps.length === 0) { // Cek agar tidak inisialisasi berulang
+    admin.initializeApp({
+      credential: admin.credential.cert(serviceAccount)
+    });
+  }
+} catch (e) {
+  console.error("Error initializing Firebase Admin:", e.message);
+  console.error("Pastikan FIREBASE_SERVICE_ACCOUNT di Netlify sudah di-set dengan benar.");
+}
+
+const db = admin.firestore(); // Dapatkan instance Firestore
+// --- AKHIR BARU ---
+
 
 const app = express();
 app.use(cors());
@@ -20,7 +44,6 @@ app.use(express.json());
 // --- KONFIGURASI (DEVNET) ---
 const SOLANA_RPC = "https://api.devnet.solana.com";
 const connection = new Connection(SOLANA_RPC, 'confirmed');
-
 // Alamat wallet bandar di-hardcode (Devnet)
 const houseWalletAddress = new PublicKey("hivWuGJHMnHNKAA5mqHxU5k1731XwQNbs8TKd22yLsT");
 // --------------------
@@ -51,11 +74,12 @@ router.post('/create-flip', async (req, res) => {
     try {
         const relayerWallet = getRelayerWallet();
         
-        const { userWallet, amount } = req.body;
-        if (!userWallet || !amount) {
-            return res.status(400).json({ error: 'Missing userWallet or amount' });
+        // Ambil 'choice' dari body
+        const { userWallet, amount, choice } = req.body; 
+        if (!userWallet || !amount || !choice) { // Pastikan choice ada
+            return res.status(400).json({ error: 'Missing userWallet, amount, or choice' });
         }
-        console.log(`[CREATE] Received flip request for ${amount} SOL from ${userWallet}`);
+        console.log(`[CREATE] Received flip request for ${amount} SOL from ${userWallet} (Choice: ${choice})`);
 
         const userPublicKey = new PublicKey(userWallet);
         const lamports = amount * LAMPORTS_PER_SOL;
@@ -71,6 +95,16 @@ router.post('/create-flip', async (req, res) => {
         
         const { blockhash } = await connection.getLatestBlockhash('finalized');
         transaction.recentBlockhash = blockhash;
+
+        // --- BARU: Simpan 'choice' di dalam transaksi menggunakan Memo ---
+        transaction.add(
+            new TransactionInstruction({
+                keys: [], // Tidak perlu key untuk memo
+                programId: new PublicKey("MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr"), // Program ID Memo Solana
+                data: Buffer.from(choice, "utf-8"), // Simpan 'heads' atau 'tails'
+            })
+        );
+        // --- AKHIR BARU ---
 
         const serializedTransaction = transaction.serialize({
             requireAllSignatures: false,
@@ -98,10 +132,17 @@ router.post('/submit-flip', async (req, res) => {
 
         const transaction = Transaction.from(Buffer.from(signedTransaction, 'base64'));
         
-        // Set ulang feePayer (hilang saat serialisasi)
-        transaction.feePayer = relayerWallet.publicKey;
+        // --- BARU: Ekstrak data dari transaksi ---
+        const userWallet = transaction.instructions[0].keys[0].pubkey.toBase58();
+        const betAmountLamports = transaction.instructions[0].data.readBigUInt64LE(4);
+        const betAmountSOL = Number(betAmountLamports) / LAMPORTS_PER_SOL;
         
-        // Gunakan partialSign untuk signature relayer
+        // Temukan instruksi memo untuk mendapatkan 'choice'
+        const memoInstruction = transaction.instructions.find(inst => inst.programId.toBase58() === "MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr");
+        const choice = memoInstruction ? memoInstruction.data.toString('utf-8') : 'unknown'; // 'heads' atau 'tails'
+        // --- AKHIR BARU ---
+        
+        transaction.feePayer = relayerWallet.publicKey;
         transaction.partialSign(relayerWallet); 
 
         console.log(`[SUBMIT] Sending transaction (bet) to network...`);
@@ -113,33 +154,63 @@ router.post('/submit-flip', async (req, res) => {
         console.log(`[SUBMIT] Bet accepted! Signature: ${signature}`);
 
         // --- COINFLIP LOGIC (CENTRALIZED) ---
-        const userWon = Math.random() < 0.5; // 50% chance
+        // Peluang 30% untuk menang (0.3)
+        const userWon = Math.random() < 0.3; // 30% chance 
+        const result = userWon ? 'WON' : 'LOST';
+
+        let payoutSignature = null;
+        let message = '';
 
         if (userWon) {
             console.log(`[FLIP] User WON! Sending prize...`);
-            const betAmount = transaction.instructions[0].data.readBigUInt64LE(4);
-            const payoutAmount = Number(betAmount) * 2;
+            // Pembayaran tetap 2x lipat
+            const payoutAmount = Number(betAmountLamports) * 2; 
             
             const payoutTx = new Transaction().add(
                 SystemProgram.transfer({
                     fromPubkey: relayerWallet.publicKey,
-                    toPubkey: transaction.instructions[0].keys[0].pubkey,
+                    toPubkey: new PublicKey(userWallet),
                     lamports: payoutAmount,
                 })
             );
             payoutTx.recentBlockhash = (await connection.getLatestBlockhash('finalized')).blockhash;
             payoutTx.feePayer = relayerWallet.publicKey;
             
-            const payoutSignature = await connection.sendTransaction(payoutTx, [relayerWallet]);
+            payoutSignature = await connection.sendTransaction(payoutTx, [relayerWallet]);
             await connection.confirmTransaction(payoutSignature, 'confirmed');
 
             console.log(`[FLIP] Prize sent! Payout Signature: ${payoutSignature}`);
-            res.json({ success: true, result: 'WON', message: 'YOU WON! PROFIT GAINED.', betTx: signature, payoutTx: payoutSignature });
+            message = 'YOU WON! PROFIT GAINED.';
 
         } else {
             console.log(`[FLIP] User LOST.`);
-            res.json({ success: true, result: 'LOST', message: 'YOU LOST! LOSS INCURRED.', betTx: signature, payoutTx: null });
+            message = 'YOU LOST! LOSS INCURRED.';
         }
+
+        // --- BARU: Tulis hasil ke Firestore ---
+        try {
+            await db.collection('flips').add({
+                wallet: userWallet,
+                amount: betAmountSOL,
+                choice: choice.toUpperCase(), // 'heads' -> 'HEADS'
+                result: result, // 'WON' atau 'LOST'
+                timestamp: admin.firestore.FieldValue.serverTimestamp() // Waktu server
+            });
+            console.log('[FIRESTORE] Flip result saved to database.');
+        } catch (dbError) {
+            console.error('[FIRESTORE] FAILED TO SAVE FLIP RESULT:', dbError);
+            // Tetap lanjutkan meski gagal menyimpan, agar user frontend dapat hasil
+        }
+        // --- AKHIR BARU ---
+
+        // Kirim respons kembali ke frontend
+        res.json({ 
+            success: true, 
+            result: result, 
+            message: message, 
+            betTx: signature, 
+            payoutTx: payoutSignature 
+        });
 
     } catch (error) {
         console.error('[SUBMIT] Error:', error);

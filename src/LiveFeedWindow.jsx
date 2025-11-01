@@ -1,6 +1,9 @@
-import React, { useEffect, useRef } from 'react';
-// Impor context
-import { useFlipContext } from './App';
+// src/LiveFeedWindow.jsx
+import React, { useState, useEffect, useRef } from 'react';
+
+// --- BARU: Impor konfigurasi Firestore dan fungsi-fungsinya ---
+import { db } from './firebaseConfig'; 
+import { collection, query, orderBy, limit, onSnapshot } from "firebase/firestore";
 
 // --- FUNGSI HELPER BARU UNTUK MEMOTONG ALAMAT WALLET ---
 const shortenWallet = (wallet) => {
@@ -11,11 +14,50 @@ const shortenWallet = (wallet) => {
 
 // Live Feed Window Component
 function LiveFeedWindow() {
-  // Ambil data transaksi langsung dari context
-  const { liveTransactions } = useFlipContext();
+  // --- BARU: State lokal untuk menyimpan transaksi dari Firestore ---
+  const [liveTransactions, setLiveTransactions] = useState([]);
   const feedContentRef = useRef(null); // Ref for auto-scroll
 
-  // Hapus semua data palsu dan interval
+  // --- BARU: Effect untuk mendengarkan Firestore ---
+  useEffect(() => {
+    console.log("Connecting to Firestore live feed...");
+
+    // Buat kueri:
+    // 1. Ambil koleksi 'flips'
+    // 2. Urutkan berdasarkan 'timestamp' (desc = terbaru di atas)
+    // 3. Batasi 50 dokumen terakhir
+    const q = query(
+      collection(db, "flips"), 
+      orderBy("timestamp", "desc"), 
+      limit(50)
+    );
+
+    // onSnapshot = pendengar real-time. 
+    // Fungsi ini akan dipanggil setiap kali ada data baru di koleksi 'flips'
+    const unsubscribe = onSnapshot(q, (querySnapshot) => {
+      const transactionsData = [];
+      querySnapshot.forEach((doc) => {
+        // Ambil data dokumen dan tambahkan 'id' uniknya
+        transactionsData.push({ id: doc.id, ...doc.data() });
+      });
+      
+      console.log("Live feed updated from Firestore:", transactionsData);
+      setLiveTransactions(transactionsData); // Update state React
+    
+    }, (error) => {
+        // Tangani error jika gagal mendengarkan
+        console.error("Error listening to Firestore:", error);
+    });
+
+    // Cleanup: 
+    // Saat komponen dibongkar (unmount), berhenti mendengarkan
+    // untuk menghindari kebocoran memori.
+    return () => {
+      console.log("Disconnecting from Firestore feed.");
+      unsubscribe();
+    };
+
+  }, []); // [] = jalankan effect ini sekali saja saat komponen pertama kali di-mount
 
   // Effect to auto-scroll to the top (newest entry)
   useEffect(() => {
@@ -45,7 +87,7 @@ function LiveFeedWindow() {
         </div>
         <br /> 
 
-        {/* Transaction list (sekarang menggunakan data asli) */}
+        {/* Daftar transaksi (sekarang menggunakan data asli dari Firestore) */}
         {liveTransactions.map(tx => (
           <div key={tx.id} className="feed-line">
             <span className="wallet">{shortenWallet(tx.wallet)}</span>

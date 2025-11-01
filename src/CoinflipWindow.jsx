@@ -1,11 +1,12 @@
+// src/CoinflipWindow.jsx
 import React, { useState, useEffect } from 'react';
 import { useWallet, useConnection } from '@solana/wallet-adapter-react'; 
 import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
 import { Transaction } from '@solana/web3.js'; 
 import { FaXTwitter } from "react-icons/fa6"; 
 
-// Impor context yang kita buat
-import { useFlipContext } from './App'; 
+// HAPUS: Impor context
+// import { useFlipContext } from './App'; 
 
 // --- NUMBER FORMATTING FUNCTION ---
 function formatMarketCap(mcap) {
@@ -27,8 +28,8 @@ function CoinflipWindow() {
   const { publicKey, connected, signTransaction } = useWallet(); 
   const { connection } = useConnection(); 
   
-  // Ambil fungsi 'addLiveTransaction' dari context
-  const { addLiveTransaction } = useFlipContext();
+  // HAPUS: Ambil fungsi 'addLiveTransaction' dari context
+  // const { addLiveTransaction } = useFlipContext();
 
   const [activeView, setActiveView] = useState('coinflip');
   const [marketCap, setMarketCap] = useState(null);
@@ -38,7 +39,6 @@ function CoinflipWindow() {
   const [resultMessage, setResultMessage] = useState('');
   const [showGlitch, setShowGlitch] = useState(false); 
   
-  // --- STATE BARU UNTUK TX HASHES ---
   const [betTx, setBetTx] = useState(null);
   const [payoutTx, setPayoutTx] = useState(null);
   
@@ -73,6 +73,7 @@ function CoinflipWindow() {
     return () => clearInterval(interval);
   }, []); 
 
+
   // --- HANDLE FLIP FUNCTION (CALLS API) ---
   const handleFlip = async () => {
     if (!publicKey || !signTransaction) {
@@ -85,7 +86,6 @@ function CoinflipWindow() {
     }
 
     setIsLoading(true);
-    // Bersihkan hasil sebelumnya
     setResultMessage(''); 
     setBetTx(null);
     setPayoutTx(null);
@@ -100,6 +100,7 @@ function CoinflipWindow() {
         body: JSON.stringify({
           userWallet: publicKey.toBase58(),
           amount: betAmount,
+          choice: choice // <-- TAMBAHKAN INI
         }),
       });
 
@@ -135,15 +136,8 @@ function CoinflipWindow() {
       setBetTx(submitData.betTx || null);
       setPayoutTx(submitData.payoutTx || null);
 
-      // --- KIRIM DATA KE LIVE FEED ---
-      addLiveTransaction({
-        id: Date.now(),
-        wallet: publicKey.toBase58(),
-        amount: betAmount,
-        choice: choice.toUpperCase(), // 'heads' -> 'HEADS'
-        result: submitData.result // 'WON' or 'LOST'
-      });
-      // -----------------------------
+      // --- HAPUS PANGGILAN addLiveTransaction ---
+      // Data sekarang datang dari Firestore, bukan dari sini
       
     } catch (error) {
       console.error('Flip Failed:', error);
@@ -165,7 +159,7 @@ function CoinflipWindow() {
           <span>COINFLIP_SYS.EXE [SOLANA]</span>
           <div className="window-controls">
             <a 
-              href="https://twitter.com/yourhandle" 
+              href="https://twitter.com/yourhandle" // <-- GANTI DENGAN TWITTER ANDA
               target="_blank" 
               rel="noopener noreferrer" 
               className="title-bar-btn"
@@ -246,7 +240,7 @@ function CoinflipWindow() {
                     )}
                   </button>
 
-                  {/* --- AREA HASIL BARU --- */}
+                  {/* --- AREA HASIL --- */}
                   <div
                     className={`result-area ${isLoading ? 'flipping' : (resultMessage.includes('WON') ? 'win' : (resultMessage.includes('LOST') || resultMessage.includes('ERROR') ? 'lose' : ''))}`}
                   >
@@ -275,8 +269,7 @@ function CoinflipWindow() {
                       </a>
                     )}
                   </div>
-                  {/* --- AKHIR AREA HASIL BARU --- */}
-
+                  {/* --- AKHIR AREA HASIL --- */}
 
                   <WalletMultiButton />
                 </>
