@@ -17,23 +17,45 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// --- CONFIGURATION ---
-const SOLANA_RPC = "https://api.devnet.solana.com"; // Change to mainnet-beta when live
+// --- KONFIGURASI ---
+const SOLANA_RPC = "https://api.devnet.solana.com"; // Ganti ke mainnet-beta saat live
 const connection = new Connection(SOLANA_RPC, 'confirmed');
 
-// Get private key from Environment Variables
-const relayerSecretKey = Uint8Array.from(JSON.parse(process.env.RELAYER_PRIVATE_KEY || '[]'));
-const relayerWallet = Keypair.fromSecretKey(relayerSecretKey);
+// --- PERBAIKAN: HAPUS LOGIC WALLET DARI SINI ---
+// const relayerSecretKey = ... (DIHAPUS)
+// const relayerWallet = ... (DIHAPUS)
 
-// Hardcode your house wallet address
-const houseWalletAddress = new PublicKey("hivWuGJHMnHNKAA5mqHxU5k1731XwQNbs8TKd22yLsT");
+// Alamat wallet bandar di-hardcode
+const houseWalletAddress = new PublicKey("TCxYUG556eXbNRMxXMtvJyTTuHs5wxE557HgcfzYg4w");
 // --------------------
 
 const router = express.Router();
 
+// --- FUNGSI BARU UNTUK MEMUAT WALLET DENGAN AMAN ---
+function getRelayerWallet() {
+  const relayerSecretKeyString = process.env.RELAYER_PRIVATE_KEY;
+  if (!relayerSecretKeyString) {
+    throw new Error("RELAYER_PRIVATE_KEY is not set in environment variables");
+  }
+  
+  try {
+    const relayerSecretKey = Uint8Array.from(JSON.parse(relayerSecretKeyString));
+    if (relayerSecretKey.length !== 64) {
+      throw new Error("Invalid private key length. Must be 64 bytes.");
+    }
+    return Keypair.fromSecretKey(relayerSecretKey);
+  } catch (err) {
+    console.error("Failed to parse RELAYER_PRIVATE_KEY:", err.message);
+    throw new Error("Failed to load relayer wallet. Check private key format.");
+  }
+}
+
 // Endpoint 1: Create Transaction
 router.post('/create-flip', async (req, res) => {
     try {
+        // --- PERBAIKAN: Muat wallet di dalam function ---
+        const relayerWallet = getRelayerWallet();
+        
         const { userWallet, amount } = req.body;
         if (!userWallet || !amount) {
             return res.status(400).json({ error: 'Missing userWallet or amount' });
@@ -50,7 +72,7 @@ router.post('/create-flip', async (req, res) => {
         });
 
         const transaction = new Transaction().add(transferInstruction);
-        transaction.feePayer = relayerWallet.publicKey;
+        transaction.feePayer = relayerWallet.publicKey; // <-- Ini akan aman sekarang
         
         const { blockhash } = await connection.getLatestBlockhash('finalized');
         transaction.recentBlockhash = blockhash;
@@ -71,6 +93,9 @@ router.post('/create-flip', async (req, res) => {
 // Endpoint 2: Submit Transaction & Coinflip
 router.post('/submit-flip', async (req, res) => {
     try {
+        // --- PERBAIKAN: Muat wallet di dalam function ---
+        const relayerWallet = getRelayerWallet();
+
         const { signedTransaction } = req.body;
         if (!signedTransaction) {
             return res.status(400).json({ error: 'Missing signedTransaction' });
@@ -78,7 +103,9 @@ router.post('/submit-flip', async (req, res) => {
         console.log(`[SUBMIT] Received signed transaction from user`);
 
         const transaction = Transaction.from(Buffer.from(signedTransaction, 'base64'));
-        transaction.sign([relayerWallet]);
+        
+        // Baris 81 Anda yang error, sekarang aman
+        transaction.sign([relayerWallet]); 
 
         console.log(`[SUBMIT] Sending transaction (bet) to network...`);
         const signature = await sendAndConfirmRawTransaction(
@@ -129,4 +156,3 @@ app.use('/api', router); // For production (from redirect)
 
 // Wrap the app for Netlify
 module.exports.handler = serverless(app);
-// <-- Saya sudah hapus '}' yang ekstra dari sini
