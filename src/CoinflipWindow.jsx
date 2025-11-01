@@ -190,8 +190,8 @@ function CoinflipWindow() {
 
         <div className="window-content">
           
-          <h1 className={`coinflip-logo ${showGlitch ? 'glitch' : ''}`} data-text="SOLFLIP">
-            SOLFLIP
+          <h1 className={`coinflip-logo ${showGlitch ? 'glitch' : ''}`} data-text="PUMPFLIP">
+            PUMPFLIP
           </h1>
           <p className="subtitle">Choose your fate. Engage protocol.</p>
 
@@ -297,9 +297,9 @@ function CoinflipWindow() {
             
           ) : (
             <div className="description-content">
-              <h3>ABOUT SOLFLIP</h3>
+              <h3>ABOUT PUMPFLIP</h3>
               <p>
-                SOLFLIP is a (centralized) provably fair coinflip
+                PUMPFLIP is a (centralized) provably fair coinflip
                 game. We pay the gas for you!
               </p>
               <p>
