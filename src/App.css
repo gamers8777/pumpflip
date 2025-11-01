@@ -4,10 +4,10 @@
 /* --- DEFINISI WARNA (UNTUK MEMUDAHKAN PENGGANTIAN) --- */
 /* Anda bisa mengubah nilai ini untuk mengubah semua warna hijau */
 :root {
-  --neon-green: #39FF14; /* <-- GANTI WARNA HIJAU UTAMA DI SINI */
+  --neon-green: #02ff9e; /* <-- GANTI WARNA HIJAU UTAMA DI SINI */
   --dark-green: #004400; 
   --medium-green: #008800;
-  --light-green: #00CC00;
+  --light-green: #00ff9d;
   --text-dark: #000;
   --background-dark: #0d0d0d;
   --background-dark-trans: rgba(13, 13, 13, 0.9);
