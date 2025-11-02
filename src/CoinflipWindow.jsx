@@ -175,7 +175,7 @@ function CoinflipWindow() {
       <div className="coinflip-window">
         
         <div className="window-title-bar">
-          <span>COINFLIP_SYS.EXE [SOLANA]</span>
+          <span>PUMPFLIP.EXE [SOLANA]</span>
           <div className="window-controls">
             <a 
               href="https://twitter.com/yourhandle" // <-- GANTI DENGAN TWITTER ANDA
