@@ -414,87 +414,6 @@
 
 
 /* ===============================================
---- TAMPILAN MOBILE (RESPONSIVE) ---
-===============================================
-*/
-@media (max-width: 900px) {
-  .app-container {
-    flex-direction: column; 
-    flex-wrap: wrap; 
-    width: 100%; 
-    padding: 10px; 
-    padding-top: 20px; 
-    padding-bottom: 20px;
-  }
-
-  .coinflip-window,
-  .live-feed-window {
-    width: 100%; 
-    min-width: unset; 
-    max-width: 500px; 
-    margin: 0 auto 20px auto; 
-  }
-  
-  .live-feed-window {
-    height: 400px; 
-  }
-}
-
-/* ... (SEMUA CSS LAMA ANDA BIARKAN) ... */
-
-/* ===============================================
---- TAMPILAN MOBILE (RESPONSIVE) ---
-===============================================
-*/
-@media (max-width: 900px) {
-  .app-container {
-    flex-direction: column; 
-    flex-wrap: wrap; 
-    width: 100%; 
-    padding: 10px; 
-    padding-top: 20px; 
-    padding-bottom: 20px;
-  }
-
-  /* --- PERUBAHAN URUTAN MOBILE DI SINI ---
-    Secara default, semua item memiliki 'order: 0'.
-    Angka yang lebih kecil akan tampil lebih dulu (di atas).
-  */
-  .coinflip-window {
-    order: 1; /* Tampil pertama (paling atas) */
-  }
-
-  .live-feed-window {
-    order: 2; /* Tampil kedua (di tengah) */
-  }
-
-  .chat-window {
-    order: 3; /* Tampil ketiga (paling bawah) */
-  }
-  /* --- AKHIR PERUBAHAN URUTAN --- */
-
-
-  .coinflip-window,
-  .live-feed-window,
-  .chat-window {
-    width: 100%; 
-    min-width: unset; 
-    max-width: 500px; 
-    margin: 0 auto 20px auto; 
-    /* Pastikan 'order' tidak tertimpa di sini */
-  }
-  
-  .live-feed-window {
-    height: 400px; 
-  }
-  
-  .chat-window {
-    height: 300px;
-  }
-}
-
-
-/* ===============================================
 --- GAYA CHAT WINDOW BARU ---
 ===============================================
 */
@@ -601,39 +520,6 @@
   color: #555;
   cursor: not-allowed;
 }
-.footer-right .footer-link {
-  font-family: 'VT323', monospace;
-  font-size: 16px;
-  color: #888; 
-  text-decoration: underline; 
-  text-underline-offset: 4px;
-  transition: color 0.2s;
-  cursor: pointer; /* <-- TAMBAHKAN INI AGAR TERLIHAT SEPERTI LINK */
-}
-
-.footer-right .footer-link:hover {
-  color: var(--neon-green); 
-}
-
-/* Penyesuaian mobile (biarkan apa adanya) */
-@media (max-width: 900px) {
-  .app-container {
-    padding-bottom: 80px; 
-  }
-  .footer-bar {
-    flex-direction: column;
-    gap: 8px;
-    padding: 12px 10px;
-  }
-  .footer-left { order: 2; }
-  .footer-right {
-    order: 1; 
-    justify-content: center;
-    flex-wrap: wrap; 
-    gap: 15px;
-    font-size: 14px;
-  }
-}
 
 
 /* ===============================================
@@ -706,12 +592,143 @@
 }
 
 
-/* --- Penyesuaian untuk Mobile --- */
+/* ===============================================
+--- GAYA MODAL (POP-UP) BARU ---
+===============================================
+*/
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.85); /* Latar belakang gelap transparan */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 100;
+  padding: 10px; /* Jarak aman di mobile */
+  box-sizing: border-box;
+}
+
+.modal-window {
+  background-color: var(--background-dark, #0d0d0d); /* <-- PERBAIKAN BUG TEMBUS */
+  border: 2px solid var(--neon-green, #02ff9e);
+  box-shadow: 4px 4px 0px var(--dark-green, #004400);
+  width: 100%;
+  max-width: 700px; /* Lebar maksimum pop-up */
+  max-height: 85vh; /* Tinggi maksimum */
+  display: flex;
+  flex-direction: column;
+  z-index: 101;
+}
+
+.modal-header {
+  background-color: var(--dark-green, #004400);
+  padding: 10px 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: 'Press Start 2P', cursive;
+  font-size: 14px;
+  color: var(--neon-green, #02ff9e);
+  flex-shrink: 0; /* Header tidak boleh menyusut */
+  border-bottom: 2px solid var(--neon-green, #02ff9e); /* <-- TAMBAHAN GARIS */
+}
+
+.modal-close-btn {
+  background: #000; /* Latar belakang hitam */
+  border: 2px solid var(--neon-green, #02ff9e); /* Batas hijau */
+  color: var(--neon-green, #02ff9e);
+  font-family: 'VT323', monospace;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  padding: 0px 8px; /* Atur padding agar pas */
+  line-height: 1.5; /* Pusatkan 'X' secara vertikal */
+  transition: all 0.2s;
+}
+.modal-close-btn:hover {
+  background-color: var(--neon-green, #02ff9e);
+  color: #000;
+}
+
+.modal-content {
+  padding: 20px 25px;
+  overflow-y: auto; /* PENTING: Membuat konten bisa di-scroll */
+  font-family: 'VT323', monospace;
+  font-size: 18px;
+  color: #FFF; /* Teks putih agar mudah dibaca */
+  line-height: 1.6;
+}
+
+.modal-content h2 {
+  font-family: 'Press Start 2P', cursive;
+  color: var(--neon-green, #02ff9e);
+  font-size: 16px;
+  margin-top: 15px;
+  margin-bottom: 10px;
+}
+
+.modal-content p, 
+.modal-content ul {
+  margin-bottom: 15px;
+  color: #FFF; /* <-- PERBAIKAN BUG TEKS HIJAU */
+}
+
+.modal-content li {
+  margin-bottom: 10px;
+  color: #FFF; /* <-- PERBAIKAN BUG TEKS HIJAU */
+}
+
+
+/* ===============================================
+--- TAMPILAN MOBILE (RESPONSIVE) ---
+===============================================
+*/
 @media (max-width: 900px) {
   .app-container {
-    padding-bottom: 80px; 
+    flex-direction: column; 
+    flex-wrap: wrap; 
+    width: 100%; 
+    padding: 10px; 
+    padding-top: 20px; 
+    padding-bottom: 80px; /* <-- PADDING FOOTER MOBILE */
   }
 
+  /* --- PERUBAHAN URUTAN MOBILE DI SINI --- */
+  .coinflip-window {
+    order: 1; /* Tampil pertama (paling atas) */
+  }
+
+  .live-feed-window {
+    order: 2; /* Tampil kedua (di tengah) */
+  }
+
+  .chat-window {
+    order: 3; /* Tampil ketiga (paling bawah) */
+  }
+  /* --- AKHIR PERUBAHAN URUTAN --- */
+
+
+  .coinflip-window,
+  .live-feed-window,
+  .chat-window {
+    width: 100%; 
+    min-width: unset; 
+    max-width: 500px; 
+    margin: 0 auto 20px auto; 
+  }
+  
+  .live-feed-window {
+    height: 400px; 
+  }
+  
+  .chat-window {
+    height: 300px;
+  }
+
+  /* --- FOOTER MOBILE --- */
   .footer-bar {
     flex-direction: column;
     gap: 8px;
