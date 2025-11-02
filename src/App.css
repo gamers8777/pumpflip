@@ -456,20 +456,39 @@
     padding-bottom: 20px;
   }
 
+  /* --- PERUBAHAN URUTAN MOBILE DI SINI ---
+    Secara default, semua item memiliki 'order: 0'.
+    Angka yang lebih kecil akan tampil lebih dulu (di atas).
+  */
+  .coinflip-window {
+    order: 1; /* Tampil pertama (paling atas) */
+  }
+
+  .live-feed-window {
+    order: 2; /* Tampil kedua (di tengah) */
+  }
+
+  .chat-window {
+    order: 3; /* Tampil ketiga (paling bawah) */
+  }
+  /* --- AKHIR PERUBAHAN URUTAN --- */
+
+
   .coinflip-window,
   .live-feed-window,
-  .chat-window { /* <-- TAMBAHKAN .chat-window DI SINI */
+  .chat-window {
     width: 100%; 
     min-width: unset; 
     max-width: 500px; 
     margin: 0 auto 20px auto; 
+    /* Pastikan 'order' tidak tertimpa di sini */
   }
   
   .live-feed-window {
     height: 400px; 
   }
-
-  .chat-window { /* <-- TAMBAHKAN INI */
+  
+  .chat-window {
     height: 300px;
   }
 }
