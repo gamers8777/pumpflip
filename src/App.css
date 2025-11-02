@@ -757,3 +757,60 @@
     display: none; /* Sembunyikan kolom kanan yg kosong */
   }
 }
+.cursor-dot, .cursor-glow {
+  position: fixed; /* Penting agar bisa mengikuti mouse di mana saja */
+  border-radius: 50%; /* Membuatnya bulat */
+  pointer-events: none; /* Kursor tidak bisa diklik */
+  user-select: none;
+  z-index: 9999; /* Pastikan di atas segalanya */
+  transform: translate(-50%, -50%); /* Memusatkan elemen di ujung kursor */
+}
+
+.cursor-dot {
+  width: 8px;
+  height: 8px;
+  background-color: var(--neon-green);
+  /* Transisi sangat cepat agar terasa instan */
+  transition: transform 0.05s linear; 
+}
+
+.cursor-glow {
+  width: 40px;
+  height: 40px;
+  border: 2px solid var(--neon-green);
+  opacity: 0.5;
+  box-shadow: 0 0 15px var(--neon-green);
+  /* Transisi lebih lambat, ini yang menciptakan EFEK JEJAK */
+  transition: transform 0.15s ease-out; 
+}
+.particle {
+  position: fixed; /* Wajib! */
+  width: 6px;      /* Ukuran titik */
+  height: 6px;
+  background-color: var(--neon-green);
+  border-radius: 50%;
+  box-shadow: 0 0 5px var(--neon-green); /* Beri sedikit glow pada titik */
+  
+  /* Hilangkan dari interaksi mouse */
+  pointer-events: none;
+  user-select: none;
+  z-index: 9999;
+  
+  /* Pusatkan titik di kursor */
+  transform: translate(-50%, -50%); 
+  
+  /* Kunci utamanya di sini: Animasi memudar & bergerak */
+  animation: particle-fade 2.1s linear forwards;
+}
+
+@keyframes particle-fade {
+  from {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  to {
+    opacity: 0;
+    /* Buat partikel bergerak ke atas dan mengecil saat memudar */
+    transform: translate(-50%, -150%) scale(0.5); 
+  }
+}

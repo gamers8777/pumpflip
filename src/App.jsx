@@ -7,6 +7,7 @@ import LiveFeedWindow from './LiveFeedWindow';
 import ChatWindow from './ChatWindow'; 
 import FooterBar from './FooterBar';
 import InfoModal from './InfoModal'; // 2. IMPORT MODAL
+import CustomCursor from './CustomCursor';
 
 // --- 3. MODAL CONTENT (NOW IN ENGLISH) ---
 // You MUST replace this placeholder text with your actual content.
@@ -86,6 +87,7 @@ function App() {
   return (
     <>
       <MatrixBackground /> 
+      <CustomCursor />
 
       <div className="app-container">
         {/* Desktop order: Chat | Coinflip | LiveFeed */}

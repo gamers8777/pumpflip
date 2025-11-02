@@ -19,6 +19,8 @@ body {
   justify-content: center;
   align-items: flex-start; /* Mulai konten dari atas */
   min-height: 100vh;
+
+  cursor: none;
 }
 
 /* Scrollbar retro */
