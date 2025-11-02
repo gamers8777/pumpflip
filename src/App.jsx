@@ -1,28 +1,27 @@
 // src/App.jsx
-import React from 'react'; // Hapus useState, createContext, useContext
+import React from 'react';
 import './App.css'; 
 import MatrixBackground from './MatrixBackground'; 
 import CoinflipWindow from './CoinflipWindow'; 
 import LiveFeedWindow from './LiveFeedWindow'; 
-import ChatWindow from './ChatWindow'; // <--- INI SUDAH DITAMBAHKAN
-
-// --- SEMUA KODE CONTEXT (FlipContext, useFlipContext, FlipProvider) DIHAPUS ---
+import ChatWindow from './ChatWindow'; 
 
 function App() {
   return (
-    // Bungkus hanya dengan Fragment (atau <>), bukan Provider lagi
     <>
       <MatrixBackground /> 
 
       <div className="app-container">
-        {/* Window 1: Coinflip Game */}
+        
+        {/* Window 1: Chat Box (Sekarang di kiri) */}
+        <ChatWindow />
+
+        {/* Window 2: Coinflip Game (Sekarang di tengah) */}
         <CoinflipWindow />
         
-        {/* Window 2: Live Feed */}
+        {/* Window 3: Live Feed (Sekarang di kanan) */}
         <LiveFeedWindow />
 
-        {/* Window 3: Chat Box */}
-        <ChatWindow />
       </div>
     </>
   );

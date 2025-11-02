@@ -92,7 +92,7 @@ function ChatWindow() {
   return (
     <div className="chat-window"> {/* <--- Ganti nama class */}
       <div className="chat-title-bar"> {/* <--- Ganti nama class */}
-        <span>[ global_chat.net ]</span>
+        <span>[ chat ]</span>
         <span className={connected ? "status-connected" : "status-disconnected"}>
           {connected ? 'CONNECTED' : 'OFFLINE'}
         </span>
