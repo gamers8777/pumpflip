@@ -637,89 +637,106 @@
 
 
 /* ===============================================
---- GAYA MODAL (POP-UP) BARU ---
+--- GAYA FOOTER BAR (UPDATE) ---
 ===============================================
 */
-.modal-overlay {
+.footer-bar {
   position: fixed;
-  top: 0;
+  bottom: 0;
   left: 0;
   width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.85); /* Latar belakang gelap transparan */
+  background-color: #0d0d0d;
+  border-top: 1px solid var(--dark-green);
+  padding: 10px 25px;
   display: flex;
-  justify-content: center;
+  justify-content: space-between; /* <-- Ini akan membagi 3 kolom */
   align-items: center;
-  z-index: 100;
-  padding: 10px; /* Jarak aman di mobile */
   box-sizing: border-box;
+  z-index: 10;
 }
 
-.modal-window {
-  background-color: var(--background-dark-trans, #0d0d0d); 
-  border: 2px solid var(--neon-green, #02ff9e);
-  box-shadow: 4px 4px 0px var(--dark-green, #004400);
-  width: 100%;
-  max-width: 700px; /* Lebar maksimum pop-up */
-  max-height: 85vh; /* Tinggi maksimum */
+/* Kolom Kiri: 1/3 Lebar, Rata Kiri */
+.footer-left {
+  flex: 1; /* Ambil 1/3 ruang */
   display: flex;
-  flex-direction: column;
-  z-index: 101;
+  justify-content: flex-start;
 }
-
-.modal-header {
-  background-color: var(--dark-green, #004400);
-  padding: 10px 15px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-family: 'Press Start 2P', cursive;
-  font-size: 14px;
-  color: var(--neon-green, #02ff9e);
-  flex-shrink: 0; /* Header tidak boleh menyusut */
-}
-
-.modal-close-btn {
-  background: #002200;
-  border: 1px solid var(--neon-green, #02ff9e);
-  color: var(--neon-green, #02ff9e);
-  font-family: 'Press Start 2P', cursive;
-  font-size: 12px;
-  cursor: pointer;
-  padding: 5px 8px;
-}
-.modal-close-btn:hover {
-  background-color: var(--neon-green, #02ff9e);
-  color: #000;
-}
-
-.modal-content {
-  padding: 20px 25px;
-  overflow-y: auto; /* PENTING: Membuat konten bisa di-scroll */
+.footer-left span {
   font-family: 'VT323', monospace;
-  font-size: 18px;
-  color: #FFF; /* Teks putih agar mudah dibaca */
-  line-height: 1.6;
-}
-
-.modal-content h2 {
-  font-family: 'Press Start 2P', cursive;
-  color: var(--neon-green, #02ff9e);
   font-size: 16px;
-  margin-top: 15px;
-  margin-bottom: 10px;
+  color: #888;
 }
 
-.modal-content p, 
-.modal-content ul {
-  margin-bottom: 15px;
+/* Kolom Tengah: 1/3 Lebar, Rata Tengah (BARU) */
+.footer-center {
+  flex: 1; /* Ambil 1/3 ruang */
+  display: flex;
+  justify-content: center; /* <-- Kunci untuk membuatnya di tengah */
+  align-items: center;
+  gap: 5px; /* Jarak antar item */
 }
 
-.modal-content ul {
-  margin-left: 20px;
-  padding-left: 10px;
+/* Kolom Kanan: 1/3 Lebar, Rata Kanan (Kosong) */
+.footer-right {
+  flex: 1; /* Ambil 1/3 ruang */
+  display: flex;
+  justify-content: flex-end;
 }
 
-.modal-content li {
-  margin-bottom: 10px;
+/* Gaya untuk link di dalam .footer-center */
+.footer-center .footer-link {
+  font-family: 'VT323', monospace;
+  font-size: 16px;
+  color: #888; 
+  text-decoration: underline; 
+  text-underline-offset: 4px;
+  transition: color 0.2s;
+  cursor: pointer;
+  padding: 0 5px; /* Beri jarak sedikit */
+}
+.footer-center .footer-link:hover {
+  color: var(--neon-green); 
+}
+
+/* Gaya untuk separator '|' (BARU) */
+.footer-center .footer-separator {
+  font-family: 'VT323', monospace;
+  font-size: 16px;
+  color: #888;
+}
+
+
+/* --- Penyesuaian untuk Mobile --- */
+@media (max-width: 900px) {
+  .app-container {
+    padding-bottom: 80px; 
+  }
+
+  .footer-bar {
+    flex-direction: column;
+    gap: 8px;
+    padding: 12px 10px;
+  }
+
+  .footer-left { 
+    order: 2; /* 2025 di bawah */
+    justify-content: center; /* Tengahkan di mobile */
+  }
+
+  .footer-center {
+    order: 1; /* Link di atas */
+    justify-content: center;
+    flex-wrap: wrap; 
+    gap: 8px;
+    font-size: 14px;
+  }
+
+  /* Sembunyikan separator di mobile agar tidak berantakan */
+  .footer-center .footer-separator {
+    display: none;
+  }
+
+  .footer-right {
+    display: none; /* Sembunyikan kolom kanan yg kosong */
+  }
 }
