@@ -4,6 +4,7 @@ import './App.css';
 import MatrixBackground from './MatrixBackground'; 
 import CoinflipWindow from './CoinflipWindow'; 
 import LiveFeedWindow from './LiveFeedWindow'; 
+import ChatWindow from './ChatWindow'; // <--- INI SUDAH DITAMBAHKAN
 
 // --- SEMUA KODE CONTEXT (FlipContext, useFlipContext, FlipProvider) DIHAPUS ---
 
@@ -19,6 +20,9 @@ function App() {
         
         {/* Window 2: Live Feed */}
         <LiveFeedWindow />
+
+        {/* Window 3: Chat Box */}
+        <ChatWindow />
       </div>
     </>
   );
