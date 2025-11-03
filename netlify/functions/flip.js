@@ -155,7 +155,7 @@ router.post('/submit-flip', async (req, res) => {
 
         // --- COINFLIP LOGIC (CENTRALIZED) ---
         // Peluang 30% untuk menang (0.3)
-        const userWon = Math.random() < 0.3; // 30% chance 
+        const userWon = Math.random() < 0.5; // 30% chance 
         const result = userWon ? 'WON' : 'LOST';
 
         let payoutSignature = null;

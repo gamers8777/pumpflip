@@ -23,7 +23,7 @@ function formatMarketCap(mcap) {
 
 // --- HARDCODED PUBLIC ADDRESSES (DEVNET) ---
 const DEXSCREENER_PAIR_ADDRESS = "82iP13cWNwA6dZ1mMvFhvyy4x34qWd5y1t3vXbN3fGqM"; // Ganti ini
-const TOKEN_CONTRACT_ADDRESS = "YOUR_TOKEN_CONTRACT_ADDRESS_HERE"; // Ganti ini
+const TOKEN_CONTRACT_ADDRESS = "SOON"; // Ganti ini
 
 // Coinflip Window Component
 function CoinflipWindow() {
@@ -175,10 +175,10 @@ function CoinflipWindow() {
       <div className="coinflip-window">
         
         <div className="window-title-bar">
-          <span>PUMPFLIP.EXE [SOLANA]</span>
+          <span>PUMPFLIP.EXE [SOLANA DEVNET]</span>
           <div className="window-controls">
             <a 
-              href="https://twitter.com/yourhandle" // <-- GANTI DENGAN TWITTER ANDA
+              href="https://x.com/pump_flip" // <-- GANTI DENGAN TWITTER ANDA
               target="_blank" 
               rel="noopener noreferrer" 
               className="title-bar-btn"

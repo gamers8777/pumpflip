@@ -17,9 +17,9 @@ const MODAL_DATA = {
     content: (
       <>
         <h2>1. Data We Collect</h2>
-        <p>We collect your wallet address when you connect to our service. We also store your chat data and flip results in our database (Firestore) to display in the Live Feed and Chat.</p>
+        <p>We collect your solana address when you connect to our service. We also store your chat data and flip results in our database to display in the Live Feed and Chat.</p>
         <h2>2. Data Usage</h2>
-        <p>Your wallet address is used to facilitate transactions (flips and chat messages) on the Solana blockchain and to display your activity.</p>
+        <p>Your solana address is used to facilitate transactions (flips and chat messages) on the Solana blockchain and to display your activity.</p>
         <h2>3. Data Sharing</h2>
         <p>We do not share your personal information. Transaction and chat data are public by the nature of the blockchain and our service.</p>
       </>
@@ -58,7 +58,6 @@ const MODAL_DATA = {
           <li>Initial release on Solana Devnet.</li>
           <li>Features: Coinflip, Live Transaction Feed, and Global Chat.</li>
           <li>Backend relayer implemented to cover user gas fees.</li>
-          <li>Firebase/Firestore integration for live feed and chat.</li>
         </ul>
       </>
     )
