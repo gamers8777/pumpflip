@@ -22,8 +22,8 @@ function formatMarketCap(mcap) {
 }
 
 // --- HARDCODED PUBLIC ADDRESSES (DEVNET) ---
-const DEXSCREENER_PAIR_ADDRESS = "82iP13cWNwA6dZ1mMvFhvyy4x34qWd5y1t3vXbN3fGqM"; // Ganti ini
-const TOKEN_CONTRACT_ADDRESS = "SOON"; // Ganti ini
+const DEXSCREENER_PAIR_ADDRESS = "BgrTYKWRKVtnc9NyoEqZ8DKf6H9KGoKcwqLW3x3sy9M9"; // Ganti ini
+const TOKEN_CONTRACT_ADDRESS = "58FrJ5fUC7APcpQYYNwjXa9FEeiaKhsY4kLo1mMFpump"; // Ganti ini
 
 // Coinflip Window Component
 function CoinflipWindow() {
